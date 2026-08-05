@@ -1,0 +1,36 @@
+{
+  "title": "Example Commander — API-Priced Budget Deck",
+  "format": "Commander",
+  "commander": "Example Commander",
+  "strategy": "Token pressure and combat tricks",
+  "tagline": "A portable example: replace all names, prices, and claims with live data.",
+  "strength": {
+    "score": "6.0",
+    "label": "Strong casual",
+    "summary": "A coherent plan with budget mana and real weaknesses; rate the actual list, not the commander alone."
+  },
+  "price": {
+    "currency": "$",
+    "quoted_total": 0.75,
+    "checked_at": "2026-08-05T20:00:00Z",
+    "scope": "example live-listing subtotal",
+    "note": "Example data only. Reprice against current marketplace inventory before making a cart."
+  },
+  "groups": [
+    {
+      "title": "Mana and setup",
+      "cards": [
+        {"name": "Sol Ring", "price": 0.35, "role": "Ramp", "printing": "Example printing", "language": "EN", "condition": "Near Mint"},
+        {"name": "Mountain", "quantity": 37, "owned": true, "role": "Basic land", "language": "EN"}
+      ]
+    },
+    {
+      "title": "Plan and payoff",
+      "cards": [
+        {"name": "Dragon Fodder", "price": 0.15, "role": "Token maker", "printing": "Example printing", "language": "EN", "condition": "Slightly Played"},
+        {"name": "Temur Battle Rage", "price": 0.25, "role": "Finisher", "printing": "Example printing", "language": "EN", "condition": "Near Mint"},
+        {"name": "Example Commander", "owned": true, "role": "Commander", "language": "EN"}
+      ]
+    }
+  ]
+}
