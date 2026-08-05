@@ -1,0 +1,6 @@
+# Small valid Commander shape for testing the offline validator.
+1 Example Commander
+1 Sol Ring
+1 Dragon Fodder
+1 Temur Battle Rage
+96 Mountain
