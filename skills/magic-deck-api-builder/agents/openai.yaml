@@ -1,0 +1,4 @@
+interface:
+  display_name: "Magic Deck API Builder"
+  short_description: "Build legal, budget Magic decks from live APIs"
+  default_prompt: "Use $magic-deck-api-builder to build a budget Commander deck with live prices and a hover-card gallery."
