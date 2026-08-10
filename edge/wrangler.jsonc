@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+  "name": "mtg-cookbook-pages-proxy",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-10",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "mtg.why57.com/*",
+      "zone_name": "why57.com"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "LEADS",
+      "database_name": "mtg-cookbook-leads",
+      "database_id": "addef217-80de-4c14-8e36-aab9232dcffe",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "secrets": {
+    "required": ["TURNSTILE_SECRET_KEY"]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

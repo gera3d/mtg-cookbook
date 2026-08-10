@@ -1,0 +1,10 @@
+{
+  "name": "mtg-cookbook-edge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "npx --yes wrangler@latest check",
+    "types": "npx --yes wrangler@latest types",
+    "typecheck": "npx --yes --package typescript tsc --noEmit"
+  }
+}
