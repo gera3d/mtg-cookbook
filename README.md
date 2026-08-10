@@ -21,14 +21,24 @@ The Skill includes a Commander validator, a gallery generator, example input dat
 
 ## Install
 
-Clone this repository, then copy the Skill folder into your harness's Skills directory:
+The portable unit is the [`SKILL.md`](skills/magic-deck-api-builder/SKILL.md) folder and its supporting files. `agents/openai.yaml` is optional appearance and dependency metadata for the ChatGPT/Codex experience; it is not a required adapter.
+
+Clone the repository from the project where you want to use the Skill:
 
 ```bash
 git clone https://github.com/gera3d/mtg-cookbook.git
-cp -R mtg-cookbook/skills/magic-deck-api-builder ~/.codex/skills/
 ```
 
-For another harness, use that harness's normal Skills directory instead. The portable entrypoint is [`SKILL.md`](skills/magic-deck-api-builder/SKILL.md).
+Then copy the same folder to the path your harness reads:
+
+| Harness | Project install | Personal install |
+| --- | --- | --- |
+| Claude Code | `mkdir -p .claude/skills && cp -R mtg-cookbook/skills/magic-deck-api-builder .claude/skills/` | `mkdir -p ~/.claude/skills && cp -R mtg-cookbook/skills/magic-deck-api-builder ~/.claude/skills/` |
+| Codex | `mkdir -p .agents/skills && cp -R mtg-cookbook/skills/magic-deck-api-builder .agents/skills/` | `mkdir -p ~/.agents/skills && cp -R mtg-cookbook/skills/magic-deck-api-builder ~/.agents/skills/` |
+
+Claude Code project Skills live in `.claude/skills/`; Codex project Skills live in `.agents/skills/`. Each personal path makes the Skill available across that person's projects. You can invoke Claude Code with `/magic-deck-api-builder` and Codex with `$magic-deck-api-builder`, or let either one select the Skill when the task matches its description.
+
+Read the current host documentation before changing how your setup discovers Skills: [Claude Code Skills](https://code.claude.com/docs/en/skills) and [OpenAI's Codex Skills guide](https://learn.chatgpt.com/docs/build-skills).
 
 ## What a good deck request looks like
 
@@ -60,4 +70,3 @@ recipes/
 ## Contributing
 
 Add a Skill or recipe only when it leaves someone with a useful decision or a repeatable workflow. Include the actual files, truthful source boundaries, and the owner gate for any external action. Don't publish private marketplace, order, address, or payment data.
-
