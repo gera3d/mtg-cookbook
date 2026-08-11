@@ -49,6 +49,7 @@ That brief gives the workflow something it can enforce. "Cheapest" alone is not 
 ## Recipe library
 
 - [Build a budget Commander deck](recipes/build-a-budget-commander-deck.md) — from deck brief through legal-list validation, quote review, and a final owner gate.
+- [Commander intelligence](skills/magic-deck-api-builder/references/commander-intelligence.md) — public data sources, Game Changers policy sync, combo detection, and an explainable power estimate.
 
 ## Ground rules
 
