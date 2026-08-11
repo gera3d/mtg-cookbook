@@ -22,6 +22,120 @@ The provider boundaries, access rules, and data-handling requirements live in [C
 - **Marketplace actions are owner-gated.** Research and quote preparation are safe. Cart mutation, accepting substitutions, and payment require explicit user approval at the time of action.
 - **No secret in the client.** CardTrader tokens and webhook secrets stay in a server-side named credential action.
 
+## mtg.why57.com delivery architecture
+
+### Product decision
+
+Deliver the first version as a **Deck Lab** on `mtg.why57.com`: a deck library with saved, source-backed insight for every owned Commander deck.
+
+Do not turn every visitor page load into a live analysis job. The site is a static GitHub Pages site proxied through a Cloudflare Worker, so the correct first implementation is a build-time analysis pipeline that publishes small JSON reports beside the static site.
+
+```text
+deck source
+  -> normalized deck manifest
+  -> Scryfall resolver + controlled cache
+  -> legality + Game Changers policy match + role classification
+  -> Commander Spellbook combo lookup
+  -> versioned report JSON + compact library index
+  -> static Deck Lab UI on mtg.why57.com
+```
+
+The public browser reads a generated report and its `analyzed_at` timestamp. It does not call Scryfall or Commander Spellbook for every hover, filter, or deck page load.
+
+### Existing-site boundary
+
+- Keep `my-decks.html` as the historical CardTrader research archive. Do not mix historic price research with gameplay intelligence.
+- Promote the existing local collection-gallery approach into a dedicated, released `decks.html` Deck Lab route instead of overwriting the research archive.
+- Add the Deck Lab page, its compact index JSON, per-deck analysis JSON, and necessary shared assets to the explicit release-file allowlist. The local gallery and collection-data files are currently outside that release surface.
+- Keep the first release public but `noindex` unless the owner instead explicitly chooses private access. Private access requires an authentication design before release.
+- Keep CardTrader purchase, cart, seller, and pricing concerns outside the P0 analysis pipeline.
+
+### Deck manifest
+
+Replace the one-string commander field with a normalized source manifest. A deck must support one or more commanders.
+
+```json
+{
+  "id": "frodo-sam-food-and-fellowship",
+  "name": "Food and Fellowship",
+  "commanders": ["Frodo, Adventurous Hobbit", "Sam, Loyal Attendant"],
+  "cards": [
+    {
+      "input_name": "Sol Ring",
+      "quantity": 1,
+      "set": null,
+      "collector_number": null,
+      "finish": null
+    }
+  ],
+  "role_overrides": {},
+  "visibility": "public_noindex"
+}
+```
+
+The analysis process may add resolved `oracle_id` and `scryfall_id` values, but the source deck manifest preserves the original input line and any exact-printing information.
+
+### Generated data contract
+
+Generate two static assets:
+
+- `data/deck-intelligence/index.json`: one compact row per deck for the Deck Lab library.
+- `data/deck-intelligence/<deck-id>.json`: the full reproducible report, including sources, policy version, timestamps, blockers, Game Changers, combos, role evidence, and score limitations.
+
+A report status must be one of `complete`, `needs_attention`, `incomplete`, or `stale`. A provider error, unresolved card, or policy mismatch is never represented as a zero.
+
+### Deck Lab user experience
+
+The library card for each deck shows:
+
+- commander or commander pair;
+- deck name and card count;
+- analysis status and checked date;
+- Game Changers count;
+- complete-combo count;
+- Commander Spellbook bracket signal.
+
+Selecting a deck opens an insight view in this order:
+
+1. **Blockers and fixes** — legality problems, unresolved inputs, and missing commander metadata.
+2. **Game Changers** — named cards, commander/mainboard treatment, policy source, and snapshot date.
+3. **Complete combos before near combos** — outcome, prerequisites, and source permalink.
+4. **Deck health** — lands, ramp, draw, interaction, protection, curve, and role-classification limits.
+5. **Power and pod-fit explanation** — versioned, evidence-backed, and explicitly an estimate.
+6. **Best next action** — a concrete fix, swap candidate, owned-card option, or later buy-plan handoff.
+
+Show the numeric power score only when its ruleset version and confidence are present. Until calibration is accepted, label it as an experimental signal rather than a public deck-power verdict.
+
+### Refresh and change model
+
+P0 refreshes analyses only through the owner build workflow: deck data change, reviewed policy update, or intentional refresh. Add caching, rate limiting, meaningful request headers, and source timestamps to the build adapters.
+
+Do not add a public “refresh this deck” button in P0. A later owner-only comparison endpoint can support hypothetical adds/removes through a Cloudflare Worker, with controlled cache and no marketplace authority.
+
+### Tested baseline: August 11, 2026
+
+The local pilot completed 13 deck analyses using Scryfall, Commander Spellbook, and the reviewed February 9, 2026 Game Changers policy snapshot.
+
+- 11 decks were legal.
+- `Aerith, Last Ancient` needs a commander/list correction: a white-green commander has red cards in the list.
+- `Sephiroth, Fabled SOLDIER` needs one duplicate removed: two `Sidisi, Undead Vizier` entries.
+- `Frodo, Adventurous Hobbit` becomes legal when `Sam, Loyal Attendant` is represented as a co-commander. This validates the commanders-array requirement.
+- `Yuna, Grand Summoner` contains `Farewell`, one complete Commander Spellbook combo, and 35 near combos.
+- `Iron Man, Titan of Innovation` contains four Game Changers.
+
+The pilot also exposed and corrected transform-card resolution, basic-land printing-label normalization, paired-commander handling, and an early role-classification error that counted lands as ramp. Keep those as regression fixtures.
+
+### Delivery sequence
+
+1. Normalize deck manifests and repair the two tested deck-data blockers.
+2. Make the analysis generator deterministic, cache-aware, and fixture-tested.
+3. Generate and review reports for every deck.
+4. Release the `decks.html` Deck Lab with a compact library index and per-deck insight view.
+5. Calibrate the public-facing power treatment from reviewed role rules and the tested reports.
+6. Add a reversible change sandbox.
+7. Add owned-card recommendations.
+8. Add protected exact-printing buy planning only after the analysis layer is trusted.
+
 ## Build order
 
 | Priority | Feature | Why it comes now |
